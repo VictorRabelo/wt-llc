@@ -1,0 +1,42 @@
+<div class="card card-load mb-0">
+  <div class="modal-header">
+    <h4>History</h4>
+    <button type="button" class="close" aria-label="Close" (click)="close()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+    
+  <div class="modal-body" [ngClass]="{'card-load': loading}">
+    <div class="direct-chat-messages">
+      <div class="direct-chat-msg" *ngFor="let item of dataSource">
+        <div class="direct-chat-infos clearfix">
+          <span class="direct-chat-timestamp float-left">{{ item.data }}</span>
+          <span class="direct-chat-name float-right">
+            <button class="btn btn-danger btn-sm" title="Excluir" (click)="deleteComentario(item.id_historico)">
+              <i class="fas fa-trash"></i>
+            </button>
+          </span>
+        </div>
+        <div class="direct-chat-text">
+          {{ item.comentario }}
+        </div>
+      </div>
+    </div>
+    <div class="card-loader" *ngIf="loading"><i class="fas fa-sync-alt anim-rotate"></i></div>
+  </div>
+
+  <form #form="ngForm"(ngSubmit)="submit(form)" (keydown.enter)="submit(form)">
+    <div class="modal-footer">
+      <div class="input-group">
+        <input type="text" name="message" placeholder="Digite aqui ..." class="form-control"
+          [(ngModel)]="dados.message" #message="ngModel">
+        <span class="input-group-append">
+          <button type="submit" class="btn btn-primary" [disabled]="loading">
+            <i class="fas fa-spinner anim-rotate" *ngIf="loading" [@enterAnimationIcon]></i>
+            <i class="far fa-paper-plane" *ngIf="!loading" [@enterAnimationIcon]></i>
+          </button>
+        </span>
+      </div>  
+    </div>
+  </form>
+</div>

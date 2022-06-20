@@ -1,0 +1,41 @@
+<form #form="ngForm" (ngSubmit)="submit(form)" (keydown.enter)="submit(form)" class="card card-load mb-0">
+  <div class="modal-header">
+    <h4>Invoice</h4>
+    <button type="button" class="close" aria-label="Close" (click)="close(true)">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+    
+  <div class="modal-body" [ngClass]="{'card-load': loading}">
+    <div class="row">
+      <div class="col">
+        <div class="img-link">
+          <img class="img-fluid img-circle" style="cursor: pointer; border-radius: 10px; width: 100%; height: 245px;"
+              [src]="path? path:'/assets/img/sem_foto.jpg'" (click)="openPhotoPicker()">
+        </div>
+        <div id="divFile">
+          <input type="file" id="inputProduto" #inputProduto accept="image/x-png,image/jpeg"
+            (change)="handleFileInput($event.target.files)" multiple>
+        </div>
+      </div>
+    </div>
+    <div class="card-loader" *ngIf="loading"><i class="fas fa-sync-alt anim-rotate"></i></div>
+  </div>
+  
+  <div class="modal-footer">
+  
+    <button type="button" class="btn btn-outline-secondary" title="Expandir" (click)="expand()"><i class="fas fa-expand"></i></button>
+    <button type="button" class="btn btn-outline-secondary mr-auto" title="Download" (click)="download()"><i class="fas fa-file-download"></i></button>
+    <button type="button" class="btn btn-secondary" (click)="close(true)">Back</button>
+    <button type="submit" class="btn btn-success" [disabled]="loading">
+      <i class="far fa-paper-plane"></i> Save
+    </button>
+  </div>
+</form>
+
+<div class="modal-invoice">
+  <div class="modal-content-invoice">
+    <img [src]="path? path:'/assets/img/sem_foto.jpg'" id="modal_img">
+  </div>
+  <span id="bt_close" (click)="closeFullScreen()">&times;</span>
+</div>

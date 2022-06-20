@@ -1,0 +1,12 @@
+<!-- #wrapper -->
+<div class="wrapper">
+  <app-nav-top></app-nav-top>
+  <app-sidebar></app-sidebar>
+
+  <div class="container-fluid">
+    <div [@routeLayoutAnimations]="prepareRoute(outletLayout)">
+      <router-outlet #outletLayout="outlet"></router-outlet>
+    </div>
+  </div>
+</div>
+<!-- /#wrapper -->

@@ -1,0 +1,80 @@
+<form #form="ngForm" (ngSubmit)="submit(form)" (keydown.enter)="submit(form)" class="card card-load mb-0">
+
+  <div class="modal-header">
+    <h4>{{ crud | titlecase }} {{ title | titlecase }}</h4>
+    <button type="button" class="close" aria-label="Close" (click)="close()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+    
+  <div class="modal-body">
+    <div class="row">
+
+      <div class="col-sm-12 form-group">
+        <label>{{ crud == 'alterar'? '':'*' }}Name</label>
+        <input type="text" required class="form-control" name="nome" 
+          [(ngModel)]="dados.name" #name="ngModel"
+          placeholder="Name of {{ title | titlecase }}"
+          [ngClass]="{'is-invalid': !name.valid && (name.touched || form.submitted)}" />
+      </div>
+      
+      <div class="col-sm-12 form-group" *ngIf="this.module == 'users'">
+        <label>{{ crud == 'alterar'? '':'*' }}Login</label>
+        <input type="text" required class="form-control" name="login" 
+          [(ngModel)]="dados.login" #login="ngModel"
+          [ngClass]="{'is-invalid': !login.valid && (login.touched || form.submitted)}" />
+      </div>
+      
+      <div class="col-sm-12 form-group" *ngIf="this.module == 'users'">
+        <label>{{ crud == 'alterar'? '':'*' }}Email</label>
+        <input type="email" required class="form-control" name="email" 
+          [(ngModel)]="dados.email" #email="ngModel"
+          [ngClass]="{'is-invalid': !email.valid && (email.touched || form.submitted)}" />
+      </div>
+      
+      <div class="col-sm-12 form-group" *ngIf="this.module == 'users'">
+        <label>{{ crud == 'alterar'? '':'*' }}Password</label>
+        <input type="password" [required]="crud !== 'alterar'? true:false" class="form-control" name="password" 
+        [(ngModel)]="dados.password" #password="ngModel"
+        [ngClass]="{'is-invalid': !password.valid && (password.touched || form.submitted)}" />
+      </div>
+      
+      <div class="col-sm-12 form-group" *ngIf="this.module == 'users'">
+        <label for="role">{{ crud == 'alterar'? '':'*' }}Role:</label>
+        <select required class="form-control" name="role" [(ngModel)]="dados.role" #role="ngModel"
+            [ngClass]="{'is-invalid': !role.valid && (role.touched || form.submitted)}">
+                <option value="entregador">Deliveryman</option>
+                <option value="vendedor">Salesman</option>
+                <option value="admin">Admin</option>
+        </select>
+      </div>
+
+      <div class="col-sm-12 form-group" *ngIf="(this.module !== 'categorias' && this.module !== 'users')">
+        <label>{{ crud == 'alterar'? '':'*' }}Phone:</label>
+        <input type="tel" class="form-control" name="telefone" 
+          [(ngModel)]="dados.telefone" #telefone="ngModel"
+          placeholder="(00) 00000-0000 / (000) 000-0000" [mask]="'(00) 0 0000-0000' || '(000) 000-0000'"
+          [ngClass]="{'is-invalid': !telefone.valid && (telefone.touched || form.submitted)}" />
+      </div>
+            
+      <div class="col-sm-12 form-group" *ngIf="this.module == 'categorias'">
+          <label>{{ crud == 'alterar'? '':'*' }}Subcategory:</label>
+          <input type="text" class="form-control" name="subcategoria" [(ngModel)]="dados.subcategoria" #subcategoria="ngModel"
+              placeholder="Nome da Subcategoria"
+              [ngClass]="{'is-invalid': !subcategoria.valid && (subcategoria.touched || form.submitted)}" />
+      </div>
+    </div>
+  </div>
+  
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="close()">Back</button>
+    <button type="submit" class="btn btn-success" [disabled]="loading">
+      <div class="spinner-border text-danger" role="status" *ngIf="loading">
+        <span class="sr-only">Loading...</span>
+      </div>
+      <span *ngIf="!loading">Save</span>
+    </button>
+  </div>
+
+  <div class="card-loader" *ngIf="loading"><i class="fas fa-sync-alt anim-rotate"></i></div>
+</form>  

@@ -1,0 +1,112 @@
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+  <!-- Content Header (Page header) -->
+  <div class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        
+        <div class="col-10">
+          <h1 class="m-0 text-title-sales d-inline mr-5">Accounting</h1>
+        </div>
+        
+        <div class="col-2 text-right">
+          <button class="btn btn-primary btn-md" title="Filtro de Pesquisa" (click)="filterDate()">
+            <i class="fas fa-search"></i>
+          </button>           
+        </div>
+      </div><!-- /.row -->
+    </div><!-- /.container-fluid -->
+  </div>
+  <!-- /.content-header -->
+
+  <!-- Main content -->
+  <section class="content">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-6 col-md-3">
+          <label class="text-danger d-block">Total Accounts: </label>
+          <span class="colorMoney">{{ totalContabilidade | currency: 'R$' }}</span>
+        </div>
+        <div class="col-6 col-md-3">
+          <label class="text-danger d-block">Monthly Accounts: </label>
+          <span class="colorMoney">{{ totalMensal | currency: 'R$' }}</span>
+        </div>
+        <div class="col-6 col-md-3">
+          <label class="text-danger d-block">Received: </label>
+          <span class="colorMoney">{{ recebido | currency: 'R$' }}</span>
+        </div>
+      </div>
+      
+      <div class="row">
+        <div class="col-12">
+          
+          <div class="card" [ngClass]="{'card-load': loading}">
+            <div class="card-header">
+              <div class="card-title">
+                <button class="btn btn-primary btn-sm" (click)="add()">
+                  <i class="fas fa-plus" title="New Accounting"></i>
+                </button>
+              </div>
+              <div class="card-tools">
+                <div class="input-group input-group-sm inputSearch">
+                  <input type="text" name="table_search" class="form-control float-right" [(ngModel)]="term" placeholder="Search...">
+        
+                  <div class="input-group-append">
+                    <div class="input-group-text">
+                      <i class="fas fa-search"></i>
+                    </div>
+                  </div>
+                  
+                </div>
+              </div>
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body table-responsive p-0">
+              <table class="table table-hover text-nowrap text-center">
+                <thead>
+                  <tr>
+                    <th scope="col">#ID</th>
+                    <th scope="col">Customer</th>
+                    <th scope="col">Date Account</th>
+                    <th scope="col">Amount</th>
+                    <th scope="col">Paid</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Action</th>
+                  </tr>
+                </thead>
+                <tbody *ngFor="let item of dataSource | filter:term">
+                  <tr>
+                    <th scope="row">{{ item.id }}</th>
+                    <td>{{ (!item.cliente)?'Cliente não informado':item.cliente.name | titlecase }}</td>
+                    <td>{{ item.created_at }}</td>
+                    <td>{{ (!item.total_final)? '****':item.total_final | currency: 'R$' }}</td>
+                    <td>{{ (!item.pago)? '****':item.pago | currency: 'R$' }}</td>
+                    <td>
+                      <span class="badge badge-success" *ngIf="item.status === 'pago' ">Paid</span>
+                      <span class="badge badge-warning" *ngIf="item.status === 'pendente' ">Pending</span>
+                      <span class="badge badge-primary" *ngIf="!item.status">Open</span>
+                    </td>
+                    <td>
+                      <button class="btn btn-warning btn-sm mx-2" title="Editar" (click)="editVenda(item.id_venda)">
+                        <i class="nav-icon fas fa-edit"></i>
+                      </button>
+                      <button class="btn btn-danger btn-sm" title="Excluir" (click)="deleteConfirm(item.id_venda)">
+                        <i class="fas fa-trash"></i>
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+                <tbody *ngIf="dataSource.length == 0">
+                  <tr class="text-center">
+                    <td colspan="7">There are currently no sales!</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="card-loader" *ngIf="loading"><i class="fas fa-sync-alt anim-rotate"></i></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

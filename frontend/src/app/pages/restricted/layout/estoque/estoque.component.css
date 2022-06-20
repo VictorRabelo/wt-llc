@@ -1,0 +1,48 @@
+thead{
+    cursor: pointer;
+}
+
+th, td{
+    text-align: center;
+    align-items: center;
+    vertical-align: middle;
+}
+
+.produtosUpdate{
+    height: 100%;
+    width: 100%;
+}
+
+.descricao{
+    white-space: pre-wrap;
+}
+
+legend {
+    font-size: 12pt;
+    font-weight: bold;
+}
+
+.fieldset {
+    font-size: 10pt;
+}
+
+.custom-file-label::after { content: "Selecione"; }
+
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+@media (max-width: 450px) {
+    .card-header>.card-tools .input-group, .card-header>.card-tools .nav, .card-header>.card-tools .pagination {
+        margin-bottom: 0 !important;
+        margin-top: -0.3rem !important;
+    }
+}

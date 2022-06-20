@@ -1,0 +1,141 @@
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">    <!-- Content Header (Page header) -->
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-8">
+                    <h1 class="m-0">Stock</h1>
+                </div>
+                <div class="col-4">
+                    <select class="form-control" id="status" name="status" [(ngModel)]="queryParams.status" (change)="rangeStatus()">
+                        <option value="all">All</option>
+                        <option value="pago">Paid</option>
+                        <option value="pendente">Sent</option>
+                        <option value="ok">In stock</option>
+                        <option value="vendido">Sold</option>
+                    </select>                     
+                </div>
+            </div><!-- /.row -->
+        </div><!-- /.container-fluid -->
+    </div>
+    <!-- /.content-header -->
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-4 col-md-2 text-center">
+                    <label class="text-danger d-block">In stock: </label>
+                    <span class="text-success">{{ estoque }}</span>
+                </div>
+                <div class="col-4 col-md-2 text-center">
+                    <label class="text-danger d-block">Sent: </label>
+                    <span class="text-success">{{ enviados }}</span>
+                </div>
+                <div class="col-4 col-md-2 text-center">
+                    <label class="text-danger d-block">Paid: </label>
+                    <span class="text-success">{{ pagos }}</span>
+                </div>
+                <div class="col-4 col-md-2 text-center">
+                    <label class="text-danger d-block">Sold: </label>
+                    <span class="text-success">{{ vendidos }}</span>
+                </div>
+                <div class="col-4 col-md-2 text-center">
+                    <label class="text-danger d-block">Total in Stock: </label>
+                    <span class="text-success">{{ totalEstoque }}</span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <app-table 
+                        [cols]="columns" 
+                        [data]="dados"
+                        [module]="'stock'"
+                        [rows]="15"
+                        [globalFields]="['id_produto', 'und', 'name', 'unitario', 'preco', 'categoria', 'fornecedor', 'status']"
+                        [loading]="isLoading"
+                        [filter]="false"
+                        (crudTable)="crudInTable($event)"
+                    ></app-table>
+                    <div class="card" [ngClass]="{'card-load': loading}">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <button class="btn btn-primary btn-sm" (click)="openForm('cadastrar')">
+                                    <i class="fas fa-plus" title="Novo Produto"></i>
+                                </button>
+                            </div>
+                            <div class="card-tools">
+                                <div class="input-group input-group-sm inputSearch">
+                                    <input type="text" name="table_search" class="form-control float-right" [(ngModel)]="term" placeholder="Search...">
+                
+                                    <div class="input-group-append">
+                                        <div class="input-group-text">
+                                            <i class="fas fa-search"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /.card-header -->
+                        <div class="card-body table-responsive p-0" style="height: 100%;">
+                            <table class="table table-hover text-nowrap">
+                                <thead>
+                                    <tr>
+                                        <th scope="col" [appSort]="estoques" data-order="desc" data-name="id_produto">#COD.</th>
+                                        <th scope="col">Photo</th>
+                                        <th scope="col">Und.</th>
+                                        <th scope="col" [appSort]="estoques" data-order="desc" data-name="name">Name</th>
+                                        <th scope="col" [appSort]="estoques" data-order="desc" data-name="valor_total">Cost</th>
+                                        <th scope="col" [appSort]="estoques" data-order="desc" data-name="preco">Suggested price</th>
+                                        <th scope="col" [appSort]="estoques" data-order="desc" data-name="categoria">Category</th>
+                                        <th scope="col" [appSort]="estoques" data-order="desc" data-name="fornecedor">Provider</th>
+                                        <th scope="col" [appSort]="estoques" data-order="desc" data-name="status">Status</th>
+                                        <th scope="col">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody *ngFor="let estoque of estoques | filter:term">
+                                    <tr>
+                                        <th scope="row">#{{ estoque.id_produto }}</th>
+                                        <td>
+                                            <async-image url="{{ estoque.path }}"></async-image>
+                                        </td>
+                                        <td>{{ estoque.und }}</td>
+                                        <td>{{ estoque.name }}</td>
+                                        <td>{{ estoque.unitario | currency: 'R$' }}</td>
+                                        <td>{{ estoque.preco | currency: 'R$' }}</td>
+                                        <td>{{ (estoque.categoria)? estoque.categoria:'Categoria excluída' }}</td>
+                                        <td>{{ (estoque.fornecedor)? estoque.fornecedor:'Fornecedor excluído' }}</td>
+                                        <td>
+                                            <div class="d-flex justify-content-center">
+                                                <span class="badge badge-success" *ngIf="estoque.status === 'ok' ">Em Estoque</span>
+                                                <span class="badge badge-warning" *ngIf="estoque.status === 'pendente' ">Enviado</span>
+                                                <span class="badge badge-danger" *ngIf="estoque.status === 'vendido' ">Vendido</span>
+                                                <span class="badge badge-primary" *ngIf="estoque.status === 'pago' ">Pago</span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <button class="btn btn-warning btn-sm mx-2" title="Editar" (click)="openForm('alterar', estoque.id_estoque)">
+                                                <i class="nav-icon fas fa-edit"></i>
+                                            </button>
+                                            <button class="btn btn-danger btn-sm" title="Excluir" (click)="delete(estoque.id_estoque)">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                                <tbody *ngIf="estoques.length == 0">
+                                    <tr>
+                                        <td colspan="10">No Products in Stock.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="card-loader" *ngIf="loading"><i class="fas fa-sync-alt anim-rotate"></i></div>
+                    </div>
+                  <!-- /.card -->
+                </div>
+            </div>
+        </div>
+    </section>
+    <p-toast position="bottom-center" key="bc"></p-toast>
+</div>

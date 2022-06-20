@@ -1,0 +1,101 @@
+<div class="card" [ngClass]="{ 'card-load': loading }">
+    <p-toolbar styleClass="p-mb-4">
+        <ng-template pTemplate="left">
+            <button pButton pRipple label="Create {{ module | titlecase }}" icon="pi pi-plus" class="p-mr-2" (click)="crudOnTable('cadastrar')"></button>
+        </ng-template>
+
+        <ng-template pTemplate="right">
+            <button type="button" pButton pRipple icon="pi pi-file-excel" (click)="exportExcel()" class="p-button-success mx-2"  pTooltip="XLS" tooltipPosition="bottom"></button>
+            <button type="button" pButton pRipple icon="pi pi-file-pdf" (click)="exportPdf()" class="p-button-warning mr-2" pTooltip="PDF" tooltipPosition="bottom"></button>
+            <button type="button" pButton pRipple icon="pi pi-filter" (click)="openFilter()" class="p-button-info mr-2" pTooltip="Filtro de Pesquisa" tooltipPosition="bottom" *ngIf="filter"></button>
+            <div class="input-group input-group-sm inputSearch">
+                <input
+                    pInputText 
+                    type="text" 
+                    (input)="dt.filterGlobal($event.target.value, 'contains')"
+                    name="table_search"
+                    class="form-control float-right"
+                    placeholder="Search..."
+                />
+
+                <div class="input-group-append">
+                    <div class="input-group-text">
+                        <i class="fas fa-search"></i>
+                    </div>
+                </div>
+            </div>
+        </ng-template>
+    </p-toolbar>
+
+    <p-table #dt 
+        id="table-component"
+        [columns]="cols" 
+        [value]="data"
+        [rows]="rows" 
+        [paginator]="true" 
+        [globalFilterFields]="globalFields"
+        [rowHover]="true" 
+        dataKey="id"
+        currentPageReportTemplate="Showing {first} to {last} of {totalRecords}" 
+        [showCurrentPageReport]="true">
+        <ng-template pTemplate="header" let-columns>
+            <tr>
+                <th *ngFor="let col of columns" pSortableColumn="{{ col.field }}">
+                    {{ col.header }}
+                    <p-sortIcon field="{{ col.field }}" *ngIf="col.sortIcon"></p-sortIcon>
+                </th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-item let-columns="columns">
+            <tr>
+                <td  *ngFor="let col of columns">
+                    <!-- Sem formatação -->
+                    <span *ngIf="!col.crud && col.mask == 'none'">
+                        {{ (!item[col.field])? 'No information':item[col.field] }}
+                    </span>
+                    <!-- Com mask para celular / telefone -->
+                    <span *ngIf="!col.crud && col.mask == 'phone'">
+                        {{ (!item[col.field])? 'No information':item[col.field] | mask: '(00) 00000-0000':'(000) 000-0000' }}
+                    </span>
+                    <!-- Com mask para dinheiro brasileiro -->
+                    <span *ngIf="!col.crud && col.mask == 'brl'">
+                        {{ (!item[col.field])? 'No information':item[col.field] | currency: 'R$' }}
+                    </span>
+                    <!-- Com mask para dinheiro americano -->
+                    <span *ngIf="!col.crud && col.mask == 'usd'">
+                        {{ (!item[col.field])? 'No information':item[col.field] | currency: '$' }}
+                    </span>
+                    <!-- Fromatação Title Case -->
+                    <span *ngIf="!col.crud && col.mask == 'title-case'">
+                        {{ (!item[col.field])? 'No information':item[col.field] | titlecase }}
+                    </span>
+                    <!-- Imagem na tabela -->
+                    <span *ngIf="!col.crud && col?.withImagem">
+                        <async-image [url]="item[col.field]"></async-image>
+                    </span>
+                    <!-- Imagem na tabela -->
+                    <span *ngIf="!col.crud && col?.roleStatus">
+                        <span *ngFor="let itemStatus of col?.roleStatus">
+                            <span [class]="'badge badge-'+itemStatus.color" *ngIf="item[col.field] == itemStatus.value">
+                                {{ itemStatus.field }}
+                            </span>
+                        </span>
+                    </span>
+                    <!-- Botões do CRUD -->
+                    <span *ngIf="col.crud">
+                        <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-warning mr-2" (click)="crudOnTable('alterar', item[col.id])"></button>
+                        <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-danger" (click)="crudOnTable('delete', item[col.id])"></button>
+                    </span>
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template *ngIf="data.length == 0">
+            <tr class="text-center">
+                <td colspan="col.lenght">No information at the moment</td>
+            </tr>
+        </ng-template>
+    </p-table>
+    <div class="card-loader" *ngIf="loading">
+        <i class="fas fa-sync-alt anim-rotate"></i>
+    </div>
+</div>

@@ -1,0 +1,114 @@
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-9">
+                    <h1 class="m-0 text-title-movition">Movement / {{ type | titlecase }}</h1>
+                </div><!-- /.col -->
+                <div class="col-3 mb-2 text-right">
+                    <button class="btn btn-primary btn-md" title="Search Filter" (click)="filterDate()">
+                      <i class="fas fa-search"></i>
+                    </button>           
+                </div>
+                <div class="col-12 text-right">
+                    <ol class="breadcrumb float-sm-right">
+                        
+                        <li class="breadcrumb-item"><a [routerLink]="['/restricted/home']"><i class="fas fa-home"></i></a></li>
+                        <li class="breadcrumb-item active">{{ type | titlecase }}</li>
+
+                    </ol>
+                </div><!-- /.col -->
+            </div><!-- /.row -->
+        </div><!-- /.container-fluid -->
+    </div>
+    <!-- /.content-header -->
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-4 ml-auto" *ngIf="type !== 'historico'">
+                    <label class="text-danger">Total daily posting: </label>
+                    <span class="pl-2">{{ saldoTotal | currency: 'R$' }}</span>
+                </div>
+                <div class="col-4 ml-auto" *ngIf="type == 'historico'">
+                    <label class="text-danger">Total balance: </label>
+                    <span class="pl-2">{{ saldoTotal | currency: 'R$' }}</span>
+                </div>
+                <div class="col-4" *ngIf="type !== 'historico'">
+                    <label class="text-danger">Total Profit: </label>
+                    <span class="pl-2">{{ lucroTotal | currency: 'R$' }}</span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <div class="card" [ngClass]="{'card-load': loading}">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <button type="button" class="btn btn-primary btn-sm" (click)="create()">
+                                    <i class="fas fa-plus" title="New Movement"></i>
+                                </button>
+                            </div>
+                            <div class="card-tools">
+                                <div class="input-group input-group-sm inputSearch">
+                                    <input type="text" name="table_search" class="form-control float-right" [(ngModel)]="term" placeholder="Search...">
+                
+                                    <div class="input-group-append">
+                                        <div class="input-group-text">
+                                          <i class="fas fa-search"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /.card-header -->
+                        <div class="card-body table-responsive p-0" style="height: 100%;">
+                            <table class="table table-hover text-nowrap text-center">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Date</th>
+                                        <th scope="col" *ngIf="type !== 'historico'">Profit</th>
+                                        <th scope="col">Amount</th>
+                                        <th scope="col">Description</th>
+                                        <th scope="col" *ngIf="type == 'historico'">Type</th>
+                                        <th scope="col">Status</th>
+                                        <th scope="col">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody *ngFor="let item of dataSource | filter:term">
+                                    <tr [ngClass]="{'tr-saida': item.tipo === 'saida'}">
+                                        <td>{{ item.data }}</td>
+                                        <td *ngIf="type !== 'historico'">{{ item.lucro == null? '***':item.lucro | currency: 'R$' }}</td>
+                                        <td>{{ item.valor | currency: 'R$' }}</td>
+                                        <td>{{ item.descricao }}</td>
+                                        <td *ngIf="type == 'historico'">
+                                            <span class="badge badge-info" *ngIf="item.status === 'eletronico' ">Electronic</span>
+                                            <span class="badge badge-warning" *ngIf="item.status === 'geral' ">General</span>
+                                        </td>
+                                        <td>
+                                            <span class="badge badge-danger" *ngIf="item.tipo === 'saida' ">Out</span>
+                                            <span class="badge badge-success" *ngIf="item.tipo === 'entrada' ">In</span>
+                                        </td>
+                                        <td>
+                                            <button type="button" class="btn btn-danger btn-sm" title="Excluir" (click)="deleteConfirm(item.id_movition)">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                                <tbody *ngIf="dataSource.length == 0 ">
+                                    <tr class="text-center">
+                                        <td [attr.colspan]="type == 'historico'? 6:6">There are no moves at the moment!</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="card-loader" *ngIf="loading"><i class="fas fa-sync-alt anim-rotate"></i></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>

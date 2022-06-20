@@ -1,0 +1,122 @@
+<div class="content-wrapper">
+  <div class="card mt-2" [ngClass]="{'card-load': loading}">  
+    <div class="card-loader" *ngIf="loading"><i class="fas fa-sync-alt anim-rotate"></i></div>
+    <div class="card-header">
+      <h4 class="title-card-header-cutsom">
+        <button type="button" class="btn btn-sm mr-2" [routerLink]="[ '/restricted/entregas' ]">
+          <i class="fa fa-arrow-left"></i>
+        </button>
+        Detalhes da entrega:
+        <span class="badge badge-success" *ngIf="entregaCurrent.status === 'ok'">Finalizada</span>
+        <span class="badge badge-warning" *ngIf="entregaCurrent.status === 'pendente'">Na rua</span>
+        <span class="badge badge-primary" *ngIf="!entregaCurrent.status">Aberta</span>
+        <div class="float-right">
+          <button type="button" class="btn btn-success mr-2" (click)="confirmEntrega()" *ngIf="!entregaCurrent.status" [disabled]="loading">
+            <i class="fas fa-check"></i> Lançar
+          </button>
+          <button type="button" class="btn btn-success mr-2" (click)="downloadRelatorio()" *ngIf="entregaCurrent.status == 'ok'" [disabled]="loading">
+            <i class="fas fa-print"></i> Relatório da entrega
+          </button>
+        </div>
+      </h4>  
+    </div>
+  
+    <div class="card-body">
+  
+      <div class="row form-group">
+        <div class="col-sm-3 form-group">
+          <label>Entregador:</label>
+          <div class="input-group">
+            <input type="text" readonly class="form-control" [(ngModel)]="entregaCurrent.entregador">
+            <div class="input-group-append" *ngIf="!entregaCurrent.status">
+              <button class="btn btn-light" (click)="openPessoal()">
+                <i class="fas fa-search"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+  
+        <div class="col-sm-2 form-group">
+          <label>Lucro:</label>
+          <input type="text" readonly currencyMask class="form-control" [(ngModel)]="entregaCurrent.lucro">
+        </div>
+  
+        <div class="col-sm-2 form-group">
+          <label>Total:</label>
+          <input type="text" readonly currencyMask class="form-control" [(ngModel)]="entregaCurrent.total_final">
+        </div>
+
+        <div class="col-sm-2 ml-auto form-group">
+          <h5>{{ entregaCurrent.id_entrega }}#{{ entregaCurrent.created_at }}</h5>
+        </div>
+      </div>
+      <div class="row" *ngIf="entregaCurrent.status == 'pendente'">
+        <div class="col-sm-2 form-group">
+          <label>Produtos Disponíveis:</label>
+          <input type="number" readonly class="form-control" [(ngModel)]="entregaCurrent.qtd_disponiveis">
+        </div>
+        <div class="col-sm-2 form-group">
+          <button class="btn btn-primary btn-debitar" (click)="confirmBaixa()" [disabled]="loading">
+            <i class="fas fa-money-bill"></i> Dar Baixa
+          </button>
+        </div>
+        <div class="col-sm-4 form-group" *ngIf="entregaCurrent.status == 'pendente'">
+          <button class="btn btn-primary" (click)="openProducts()" style="margin-top: 32px;" [disabled]="loading">
+            <i class="fas fa-search"></i> Pesquisar Produtos
+          </button>
+        </div>
+      </div>
+      <div class="row" *ngIf="!entregaCurrent.status">
+        <div class="col-sm-4 form-group">
+          <button class="btn btn-primary" (click)="openProducts()" [disabled]="loading">
+            <i class="fas fa-search"></i> Pesquisar Produtos
+          </button>
+        </div>
+      </div>
+  
+      <div class="table-responsive" style="height: 80%;">
+        <table class="table table-hover text-nowrap text-center">
+          <thead>
+            <th>#COD</th>
+            <th>Qtd.</th>
+            <th>Qtd. Disponível</th>
+            <th>Foto</th>
+            <th>Produto</th>
+            <th>Valor</th>
+            <th>Lucro</th>
+            <th *ngIf="entregaCurrent.status !== 'ok'">Ação</th>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of entregaCurrent.itens;">
+              <td>{{ item.produto.id_produto }}</td>
+              <td>{{item.qtd_produto | number}}</td>
+              <td>{{item.qtd_disponivel | number}}</td>
+              <td>
+                <async-image url="{{ item.produto.path }}"></async-image>
+              </td>
+              <td>{{ item.produto.name | titlecase }}</td>
+              <td>{{ item.preco_entrega | currency:'R$' }}</td>
+              <td>{{ item.lucro_entrega | currency:'R$' }}</td>
+              <td *ngIf="entregaCurrent.status !== 'ok'">
+                <button class="btn btn-sm btn-primary" (click)="openItem('add', item.id)">
+                  <i class="fas fa-plus"></i>
+                </button>
+                <button class="btn btn-sm btn-warning mx-1" (click)="openItem('alterar', item.id)">
+                  <i class="fas fa-pen"></i>
+                </button>
+                <button class="btn btn-sm btn-danger" (click)="deleteItemConfirm(item)">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+          <tbody *ngIf="entregaCurrent.itens.length == 0">
+            <tr class="text-center">
+              <td colspan="8">Não há itens no momento</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

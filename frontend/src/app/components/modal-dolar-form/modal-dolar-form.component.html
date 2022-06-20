@@ -1,0 +1,52 @@
+<form #form="ngForm" (ngSubmit)="submit(form)" (keydown.enter)="submit(form)" class="card card-load mb-0">
+  <div class="modal-header">
+    <h4>Move Dollar</h4>
+    <button type="button" class="close" aria-label="Close" (click)="close()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+    
+  <div class="modal-body">
+    <div class="row">
+      <div class="col-12 form-group">
+        <label for="status">{{ crud == 'alterar'? '':'*' }}Status:</label>
+        <select required class="form-control" name="status" [(ngModel)]="dados.status" #status="ngModel"
+          [ngClass]="{'is-invalid': !status.valid && (status.touched || form.submitted)}">
+          
+          <option value="entrada">IN</option>
+          <option value="saida">OUT</option>
+
+        </select>
+      </div>
+
+      <div class="col-12 form-group">
+        <label>Amount:</label>
+        <input type="text" currencyMask [options]="{ prefix: '$ '}" class="form-control" name="montante" [(ngModel)]="dados.montante" (keyup)="calcRestante()">
+      </div>
+      
+      <div class="col-12 form-group" *ngIf="dados.status !== 'saida'" [@enterAnimation]>
+        <label>Amount in Dollar:</label>
+        <input type="text" currencyMask class="form-control" name="valor_dolar" [(ngModel)]="dados.valor_dolar" (keyup)="calcRestante()">
+      </div>
+      
+      <div class="col-12 form-group" *ngIf="dados.status !== 'saida'" [@enterAnimation]>
+        <label>Amount Paid:</label>
+        <input type="text" currencyMask readonly class="form-control" name="valor_pago" [(ngModel)]="dados.valor_pago">
+      </div>
+      
+      <div class="col-12 form-group">
+        <label>Description:</label>
+        <input type="text" class="form-control" name="descricao" [(ngModel)]="dados.descricao">
+      </div>
+
+    </div>
+  </div>
+  <div class="modal-footer">
+  
+    <button type="button" class="btn btn-secondary" (click)="close()">Back</button>
+    <button type="submit" class="btn btn-success" [disabled]="loading">
+      <i class="fas fa-money-bill"></i> Save
+    </button>
+  </div>
+  <div class="card-loader" *ngIf="loading"><i class="fas fa-sync-alt anim-rotate"></i></div>
+</form>

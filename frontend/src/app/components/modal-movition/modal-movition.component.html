@@ -1,0 +1,51 @@
+<form #form="ngForm" (ngSubmit)="submit(form)" (keydown.enter)="submit(form)" class="card card-load mb-0">
+
+  <div class="modal-header">
+    <h4>Movement {{ type | titlecase }}</h4>
+    <button type="button" class="close" aria-label="Close" (click)="close()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+    
+  <div class="modal-body">
+    <div class="row">
+
+      <div class="form-group col-sm-12">
+        <label>*Value:</label>
+        <input type="text" class="form-control" name="valor" currencyMask required
+          [(ngModel)]="dados.valor" #valor="ngModel"
+          [ngClass]="{'is-invalid': !valor.valid && (valor.touched || form.submitted)}">
+      </div>
+      
+      <div class="form-group col-12">
+        <label>*Description:</label>
+        <input type="text" class="form-control" name="descricao" required
+          [(ngModel)]="dados.descricao" #descricao="ngModel"
+          [ngClass]="{'is-invalid': !descricao.valid && (descricao.touched || form.submitted)}">
+      </div>
+      
+      <div class="form-group col-12">
+        <label class="fieldset">*Type:</label>
+        <select class="custom-select custom-select-sm" name="tipo" required
+          [(ngModel)]="dados.tipo" #tipo="ngModel"
+          [ngClass]="{'is-invalid': !tipo.valid && (tipo.touched || form.submitted)}">
+          <option value="entrada">IN</option>
+          <option value="saida">OUT</option>
+        </select>
+      </div>
+
+    </div>
+  </div>
+  
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="close()">Back</button>
+    <button type="submit" class="btn btn-success" [disabled]="loading">
+      <div class="spinner-border text-danger" role="status" *ngIf="loading">
+        <span class="sr-only">Loading...</span>
+      </div>
+      <span *ngIf="!loading">Create</span>
+    </button>
+  </div>
+
+  <div class="card-loader" *ngIf="loading"><i class="fas fa-sync-alt anim-rotate"></i></div>
+</form>  
